@@ -9,22 +9,13 @@ import { Alerta } from "../../componentes/Alerta";
 import { auth } from "../../config/firebase";
 import animacaoCarregando from "../../../assets/animacaoCarregando.gif";
 import { alteraDados } from '../../utils/comum';
+import { entradas } from './entradas';
 
 export default function Login({ navigation }) {
-  // const [email, setEmail] = useState("");
-  // const [senha, setSenha] = useState("");
-
   const [dados, setDados] = useState({
     email: "",
     senha: "",
   });
-
-  // const alteraDados = (variavel, valor) => {
-  //   setDados({
-  //     ...dados,
-  //     [variavel]: valor,
-  //   });
-  // };
 
   const [statusError, setStatusError] = useState("");
   const [mensagemError, setMensagemError] = useState("");
@@ -55,10 +46,6 @@ export default function Login({ navigation }) {
         setStatusError("firebase");
         setMensagemError("Email ou senha não conferem");
       } else if (resultado == "sucesso") {
-        // setDuracaoMensagem(3000);
-        // navigation.navigate("Principal");
-
-        // Apaga as telas anteriores da pilha e reinicia a aplicação
         navigation.replace("Principal");
       }
       console.log(resultado);
@@ -75,25 +62,38 @@ export default function Login({ navigation }) {
 
   return (
     <View style={estilos.container}>
-      <EntradaTexto
+      {/* <EntradaTexto
         label="E-mail"
-        // value={email}
         value={dados.email}
-        // onChangeText={(texto) => setEmail(texto)}
         onChangeText={(valor) => alteraDados('email', valor, dados, setDados)}
         error={statusError == "email"}
         messageError={mensagemError}
       />
       <EntradaTexto
         label="Senha"
-        // value={senha}
         value={dados.senha}
-        // onChangeText={(texto) => setSenha(texto)}
         onChangeText={(valor) => alteraDados('senha', valor, dados, setDados)}
         secureTextEntry
         error={statusError == "senha"}
         messageError={mensagemError}
-      />
+      /> */}
+
+      {
+        entradas.map((entrada) => {
+          return (
+              <EntradaTexto
+              key={entrada.id}
+              // label={entrada.label}
+              // messageError={entrada.messageError}
+              // secureTextEntry={entrada.secureTextEntry}
+              {...entrada}
+              value={dados[entrada.name]}
+              onChangeText={valor => alteraDados(entrada.name, valor, dados, setDados)}
+            />          
+          )
+
+        })
+      }
 
       <Alerta
         mensagem={mensagemError}
@@ -102,9 +102,7 @@ export default function Login({ navigation }) {
         duracao={duracaoMensagem}
       />
 
-      {/* <Botao onPress={() => navigation.navigate("Principal")}>LOGAR</Botao> */}
       <Botao onPress={() => realizarLogin()}>LOGAR</Botao>
-
       <Botao
         onPress={() => {
           navigation.navigate("Cadastro");
